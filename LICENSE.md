@@ -1,0 +1,1 @@
+[Causality is not a part of the actual world](https://github.com/jpivarski/causality-not-actual) by [Jim Pivarski](https://github.com/jpivarski) is licensed under [CC BY-ND 4.0CC](https://creativecommons.org/licenses/by-nd/4.0/?ref=chooser-v1).
