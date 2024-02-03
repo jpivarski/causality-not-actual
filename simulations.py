@@ -1,3 +1,4 @@
+import ast
 import xml.etree.ElementTree
 
 
@@ -7,7 +8,7 @@ class SVG(xml.etree.ElementTree.Element):
             svg.svg(
                 self._builder.__getattr__("defs")(*self._builder.defs),
                 self,
-                **self._builder._svg_attributes
+                **self._builder._svg_attributes,
             )
         ).decode()
 
@@ -143,4 +144,129 @@ def arrow_down_right(g, i, j):
     )
 
 
-__all__ = ["show", "label_axis", "arrow_down", "arrow_right", "arrow_down_right"]
+class Computation:
+    def __init__(self, label, dependencies):
+        self.label = label
+        self.dependencies = dependencies
+
+    def __repr__(self):
+        if len(self.dependencies) == 0:
+            return f"<Computation {self.label!r} has no dependencies>"
+        else:
+            return f"<Computation {self.label!r} depends on {', '.join(repr(x) for x in self.dependencies)}>"
+
+
+class PythonToGraph(ast.NodeVisitor):
+    def __init__(self):
+        self.symbol_table = {}
+        self.final_results = []
+
+    def visit_Name(self, node):
+        if isinstance(node.ctx, ast.Load):
+            this = ast.unparse(node)
+            if this not in self.symbol_table:
+                self.symbol_table[this] = Computation(this, [])
+            if this in self.final_results:
+                self.final_results.remove(this)
+
+    def visit_Call(self, node):
+        assert isinstance(node.func, ast.Name), "not implemented"
+        this = ast.unparse(node)
+        args = []
+        for arg in node.args:
+            self.visit(arg)
+            args.append(ast.unparse(arg))
+        self.symbol_table[this] = Computation(this, args)
+
+    def visit_Constant(self, node):
+        this = ast.unparse(node)
+        self.symbol_table[this] = Computation(this, [])
+
+    def visit_UnaryOp(self, node):
+        self.generic_visit(node)
+        this = ast.unparse(node)
+        arg = ast.unparse(node.operand)
+        self.symbol_table[this] = Computation(this, [arg])
+
+    def visit_BinOp(self, node):
+        self.generic_visit(node)
+        this = ast.unparse(node)
+        left = ast.unparse(node.left)
+        right = ast.unparse(node.right)
+        self.symbol_table[this] = Computation(this, [left, right])
+
+    def visit_Assign(self, node):
+        assert len(node.targets) == 1, "not implemented"
+        assert isinstance(node.targets[0], ast.Name), "not implemented"
+        assert node.targets[0].id not in self.symbol_table, "not implemented"
+        self.generic_visit(node)
+        this = node.targets[0].id
+        value = ast.unparse(node.value)
+        self.symbol_table[this] = Computation(this, [value])
+        self.final_results.append(this)
+
+
+def draw_computation_graph(expression):
+    graph = PythonToGraph()
+    graph.visit(ast.parse(expression))
+
+    svg2 = SVGBuilder(width=600, height=len(graph.symbol_table) * 50)
+    svg2.defs.append(arrow)
+
+    g = svg2.g()
+    order = {}
+    for i, label in enumerate(graph.symbol_table):
+        if label in graph.final_results:
+            color = "gold"
+        elif len(graph.symbol_table[label].dependencies) == 0:
+            color = "ghostwhite"
+        else:
+            color = "lightyellow"
+        g.append(
+            svg2.rect(
+                x=5, y=50 * i + 12, width=170, height=25, stroke="black", fill=color
+            )
+        )
+        g.append(
+            svg2.text(
+                label,
+                x=90,
+                y=50 * i + 24,
+                text_anchor="middle",
+                dominant_baseline="central",
+            )
+        )
+        order[label] = i
+
+    drawn = set()
+    for to_i, label in enumerate(graph.symbol_table):
+        for dependency in graph.symbol_table[label].dependencies:
+            from_i = order[dependency]
+            radius = (to_i - from_i) * 10
+            if (from_i, to_i) not in drawn:
+                g.append(
+                    svg2.path(
+                        d=svg2(
+                            [
+                                ("M", 175, 50 * from_i + 30),
+                                ("A", radius, radius, 0, 0, 1, 175, 50 * to_i + 20),
+                            ]
+                        ),
+                        stroke="black",
+                        fill="none",
+                        marker_end="url(#arrow)",
+                    )
+                )
+            drawn.add((from_i, to_i))
+
+    return g
+
+
+__all__ = [
+    "show",
+    "label_axis",
+    "arrow_down",
+    "arrow_right",
+    "arrow_down_right",
+    "draw_computation_graph",
+]
