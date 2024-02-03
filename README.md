@@ -24,3 +24,5 @@ and once JupyterLite has loaded, click on the small, orange jupyterlab-deck icon
 </p>
 
 Select cells and control-enter (Windows, Linux) or command-enter (Mac) to run them in the slideshow. Use the arrows on the bottom-right to navigate between slides.
+
+You will probably also want to increase your browser window's zoom to 150‒200%, using control-+ (Windows, Linux) or command-+ (Mac).
