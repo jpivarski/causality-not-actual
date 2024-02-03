@@ -17,6 +17,10 @@ Click on this link:
   </a>
 </p>
 
-and when JupyterLite launches in your browser, click on the small, orange jupyterlab-deck icon on the top toolbar:
+and once JupyterLite has loaded, click on the small, orange jupyterlab-deck icon on the top toolbar:
 
-<center><img src="https://raw.githubusercontent.com/jpivarski/causality-not-actual/main/assets/deck.svg" height="40"></center>
+<p align="center">
+  <img src="https://raw.githubusercontent.com/jpivarski/causality-not-actual/main/assets/deck.svg" height="40">
+</p>
+
+Select cells and control-enter (Windows, Linux) or command-enter (Mac) to run them in the slideshow. Use the arrows on the bottom-right to navigate between slides.
