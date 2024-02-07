@@ -26,3 +26,9 @@ and once JupyterLite has loaded, click on the small, orange jupyterlab-deck icon
 Select cells and control-enter (Windows, Linux) or command-enter (Mac) to run them in the slideshow. Use the arrows on the bottom-right to navigate between slides.
 
 You will probably also want to increase your browser window's zoom to 150‒200%, using control-+ (Windows, Linux) or command-+ (Mac).
+
+## Abstract
+
+"Causality" and "to cause" are common words in physics, particularly in relativity and quantum mechanics. This would make it seem like causality is a quantity in physics, akin to energy or gravitational strength, but it is not. For "A causes B" to mean "B _would_ happen if A happens," a causality relation has to range over sets of possible worlds, not just the actual world in which physical quantities reside.
+
+In this talk, I'll argue in favor of causality as a property of a set of possible worlds, both at the qualitative level that it is usually presented in modal logic, but also with computer simulations that serve as a mock-up of a set of physical worlds. In particular, I'll show a case of two physically identical worlds that are products of different physical laws with a different causal structure, to underscore the point that causality requires more than the actual world to be sensible.
