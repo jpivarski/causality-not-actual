@@ -7,6 +7,8 @@ This is an update of a point that I have written about in two essays,
 
 but in the form of a presentation for the Fermi Society of Philosophy, and focusing on just the point about causality: that it's a feature of possible worlds, not the actual world.
 
+Here is [a video of this talk](https://youtu.be/BrNr5q_vegA), as it was presented on February 15, 2024.
+
 ## To view the slideshow
 
 Click on this link:
